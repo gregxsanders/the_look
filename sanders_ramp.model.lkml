@@ -13,11 +13,11 @@ datagroup: sanders_ramp_default_datagroup {
 
 persist_with: sanders_ramp_default_datagroup
 
-explore: bsandell {}
+# explore: bsandell {}
 
-explore: company_list {}
+# explore: company_list {}
 
-explore: distribution_centers {}
+# explore: distribution_centers {}
 
 explore: events {
   join: users {
