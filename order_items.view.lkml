@@ -65,6 +65,11 @@ view: order_items {
     sql:  ${delivered_date} - ${shipped_date} ;;
   }
 
+  dimension: handling_duration {
+    type: number
+    sql:  ${shipped_date} - ${created_date} ;;
+  }
+
   dimension: sale_price {
     type: number
     sql: ${TABLE}.sale_price ;;
@@ -103,6 +108,12 @@ view: order_items {
   measure: avg_shipping_duration {
     type:  average
     sql: 1.00 * ${shipping_duration} ;;
+    value_format_name: decimal_2
+  }
+
+  measure: avg_handling_duration {
+    type:  average
+    sql: 1.00 * ${handling_duration} ;;
     value_format_name: decimal_2
   }
 
