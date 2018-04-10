@@ -60,6 +60,11 @@ view: order_items {
     sql: ${TABLE}.returned_at ;;
   }
 
+  dimension: shipping_duration {
+    type: number
+    sql:  ${delivered_date} - ${shipped_date} ;;
+  }
+
   dimension: sale_price {
     type: number
     sql: ${TABLE}.sale_price ;;
@@ -93,6 +98,12 @@ view: order_items {
   measure: count {
     type: count
     drill_fields: [detail*]
+  }
+
+  measure: avg_shipping_duration {
+    type:  average
+    sql: 1.00 * ${shipping_duration} ;;
+    value_format_name: decimal_2
   }
 
   # ----- Sets of fields for drilling ------
