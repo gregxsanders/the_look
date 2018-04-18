@@ -12,6 +12,13 @@ view: users {
     sql: ${TABLE}.age ;;
   }
 
+  dimension: age_tier {
+    type: tier
+    tiers: [20, 30, 40, 50, 70]
+    style: integer
+    sql: ${age} ;;
+  }
+
   dimension: city {
     type: string
     sql: ${TABLE}.city ;;
@@ -21,7 +28,8 @@ view: users {
     type: string
     map_layer_name: countries
     sql: ${TABLE}.country ;;
-  }
+    drill_fields: [state, zip]
+    }
 
   dimension_group: created {
     type: time
@@ -69,8 +77,10 @@ view: users {
 
   dimension: state {
     type: string
+    map_layer_name: us_states
     sql: ${TABLE}.state ;;
-  }
+    drill_fields: [city, zip]
+    }
 
   dimension: traffic_source {
     type: string
@@ -80,10 +90,22 @@ view: users {
   dimension: zip {
     type: zipcode
     sql: ${TABLE}.zip ;;
-  }
+    map_layer_name: uk_postcode_areas
+    }
 
   measure: count {
     type: count
     drill_fields: [id, first_name, last_name, events.count, order_items.count]
   }
+
+#   set: detail {
+#     fields: [
+#       id,
+#       first_name,
+#       last_name,
+#       gender,
+#       state,
+#       email
+#     ]
+#   }
 }

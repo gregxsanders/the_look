@@ -105,6 +105,77 @@ view: order_items {
     drill_fields: [detail*]
   }
 
+  measure: sum_of_sales {
+    type: sum
+    sql: ${sale_price} ;;
+    value_format_name: usd
+  }
+
+  measure: sum_of_returns {
+    type: sum
+    filters: {
+      field: status
+      value: "Returned"
+    }
+    sql: ${sale_price} ;;
+    value_format_name: usd
+  }
+
+  measure: return_rate_by_price {
+    type: number
+    description: "Return rate by sale value"
+    sql: ${sum_of_returns} / NULLIF(${sum_of_sales}, 0) ;;
+    value_format_name: percent_2
+  }
+
+  measure: count_complete {
+    type: count
+    filters: {
+      field: status
+      value: "Complete"
+    }
+    drill_fields: [detail*]
+  }
+
+  measure: count_returned {
+    type: count
+    filters: {
+      field: status
+      value: "Returned"
+    }
+    drill_fields: [detail*]
+  }
+
+  measure: return_rate_pct {
+    type: number
+    sql: 1.00* ${count_returned} / NULLIF(${count_complete}, 0) ;;
+    value_format_name: percent_2
+  }
+
+  dimension: gross_margin {
+    description: "Sale price - product cost"
+    sql: ${sale_price} - ${products.cost} ;;
+    value_format_name: usd
+  }
+
+  measure: sum_gross_margin {
+    description: "Sum of gross margin of complete orders"
+    type: sum
+    filters: {
+      field: status
+      value: "Complete"
+    }
+    sql: ${gross_margin} ;;
+    value_format_name: usd
+  }
+
+  measure: cumulative_total_revenue {
+    description: "Cumulative revenue"
+    type: running_total
+    sql: ${sum_of_sales} ;;
+    value_format_name: usd
+  }
+
   measure: avg_shipping_duration {
     type:  average
     sql: 1.00 * ${shipping_duration} ;;
