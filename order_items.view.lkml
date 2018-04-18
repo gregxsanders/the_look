@@ -65,6 +65,17 @@ view: order_items {
     sql:  ${delivered_date} - ${shipped_date} ;;
   }
 
+#   measure: wrong_total_shipping_duration {
+#     type: sum
+#     sql: ${shipping_duration} ;;
+#   }
+#
+#   measure: total_shipping_duration {
+#     type: sum_distinct
+#     sql_distinct_key: ${order_id} ;;
+#     sql: ${shipping_duration} ;;
+#   }
+
   dimension: handling_duration {
     type: number
     sql:  ${shipped_date} - ${created_date} ;;
@@ -73,6 +84,7 @@ view: order_items {
   dimension: sale_price {
     type: number
     sql: ${TABLE}.sale_price ;;
+    value_format_name: usd
   }
 
   dimension_group: shipped {
@@ -109,6 +121,8 @@ view: order_items {
     type: sum
     sql: ${sale_price} ;;
     value_format_name: usd
+#     drill_fields: [id, sale_price, products.category, products.name]
+    drill_fields: [detail*]
   }
 
   measure: sum_of_returns {
@@ -119,6 +133,11 @@ view: order_items {
     }
     sql: ${sale_price} ;;
     value_format_name: usd
+  }
+
+  dimension: is_returned {
+    type: yesno
+    sql: ${status} = 'Returned' ;;
   }
 
   measure: return_rate_by_price {
@@ -156,6 +175,7 @@ view: order_items {
     description: "Sale price - product cost"
     sql: ${sale_price} - ${products.cost} ;;
     value_format_name: usd
+    drill_fields: [detail*]
   }
 
   measure: sum_gross_margin {
@@ -167,6 +187,7 @@ view: order_items {
     }
     sql: ${gross_margin} ;;
     value_format_name: usd
+    drill_fields: [detail*]
   }
 
   measure: cumulative_total_revenue {
@@ -174,29 +195,54 @@ view: order_items {
     type: running_total
     sql: ${sum_of_sales} ;;
     value_format_name: usd
+    drill_fields: [detail*]
   }
 
   measure: avg_shipping_duration {
     type:  average
     sql: 1.00 * ${shipping_duration} ;;
     value_format_name: decimal_2
+    drill_fields: [detail*]
   }
 
   measure: avg_handling_duration {
     type:  average
     sql: 1.00 * ${handling_duration} ;;
     value_format_name: decimal_2
+    drill_fields: [detail*]
+  }
+
+  measure: avg_sale_price {
+    type: average
+    sql: ${sale_price} ;;
+    value_format_name: usd
+    drill_fields: [detail*]
+  }
+
+  measure: min_sale {
+    type: min
+    sql: ${sale_price} ;;
+    value_format_name: usd
+    drill_fields: [detail*]
+  }
+
+  measure: max_sale {
+    type: max
+    sql: ${sale_price} ;;
+    value_format_name: usd
+    drill_fields: [detail*]
+  }
+
+  measure: cost_sum {
+    description: "Sum of product cost"
+    type: sum
+    sql: ${products.cost} ;;
+    value_format_name: usd
+    drill_fields: [detail*]
   }
 
   # ----- Sets of fields for drilling ------
   set: detail {
-    fields: [
-      id,
-      users.id,
-      users.first_name,
-      users.last_name,
-      inventory_items.id,
-      inventory_items.product_name
-    ]
+    fields: [id, order_id, status, created_date, sale_price, products.brand, products.name, users.gender, users.name, users.email]
   }
 }

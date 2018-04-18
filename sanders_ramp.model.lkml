@@ -18,10 +18,12 @@ datagroup: sanders_ramp_longer_datagroup {
 persist_with: sanders_ramp_default_datagroup
 
 explore: order_items {
-  label: "1. Orders"
+  label: "1. US Orders"
   group_label: "Sanders TheLook Exercise"
   persist_with: sanders_ramp_longer_datagroup
+  sql_always_where: ${users.country} = 'USA' ;;
   join: users {
+    view_label: "Customers"
     type: left_outer
     sql_on: ${order_items.user_id} = ${users.id} ;;
     relationship: many_to_one
@@ -40,7 +42,7 @@ explore: order_items {
   }
 
   join: distribution_centers {
-    type: left_outer
+    type: inner
     sql_on: ${products.distribution_center_id} = ${distribution_centers.id} ;;
     relationship: many_to_one
     fields: [id, name, count]
@@ -50,12 +52,29 @@ explore: order_items {
 explore: events {
   label: "2. Events"
   group_label: "Sanders TheLook Exercise"
-  join: users {
-    type: inner
-    sql_on: ${users.id} = ${events.user_id} ;;
+#non-sensically join the users as two groups by country
+  join: us_users {
+    view_label: "US Users"
+    from: users
+    type: left_outer
+    sql_on: ${us_users.id} = ${events.user_id} AND ${us_users.country} = 'USA';;
     relationship: many_to_one
   }
+  join: uk_users {
+    view_label: "UK Users"
+    from: users
+    type: left_outer
+    sql_on: ${uk_users.id} = ${events.user_id} AND ${uk_users.country} = 'UK';;
+    relationship: many_to_one
+  }
+  always_filter: {
+    filters: {
+      field: created_year
+      value: "2018"
+    }
+  }
 }
+
 
 explore: company_list {
   label: "3. Company List"

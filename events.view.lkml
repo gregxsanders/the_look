@@ -100,6 +100,11 @@ view: events {
 
   measure: count {
     type: count
-    drill_fields: [id, users.id, users.first_name, users.last_name]
+    drill_fields: [detail*]
+  }
+
+ # ----- Sets of fields for drilling ------
+  set: detail {
+    fields: [id, event_type, browser, traffic_source, os, users.id, users.email]
   }
 }
