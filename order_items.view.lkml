@@ -220,6 +220,8 @@ view: order_items {
   }
 
   measure: min_sale {
+    label: "Smallest Sale"
+    description: "Least Item Sale Value"
     type: min
     sql: ${sale_price} ;;
     value_format_name: usd
@@ -227,6 +229,8 @@ view: order_items {
   }
 
   measure: max_sale {
+    label: "Biggest Sale"
+    description: "Largest Item Sale Value"
     type: max
     sql: ${sale_price} ;;
     value_format_name: usd
