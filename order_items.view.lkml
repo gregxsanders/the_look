@@ -21,6 +21,36 @@ view: order_items {
     sql: ${TABLE}.created_at ;;
   }
 
+  # dimension: lead_created_date {
+  #   type: date
+  #   view_label: "Lead Created Timeframe"
+  #   label: "Lead Created date as mo"
+  #   sql: ${TABLE}.created_at ;;
+  #   convert_tz: no
+  #   html: {{ rendered_value | date: "%Y %B" }};;
+  # }
+
+  dimension: lead_created_month {
+    type: date_month
+    view_label: "Lead Created Timeframe"
+    label: "Lead Created Month"
+    sql: ${TABLE}.created_at ;;
+    convert_tz: no
+    html: {{ rendered_value | replace: '-01',' January' |
+        replace: '-02',' February' |
+        replace: '-03',' March' |
+        replace: '-04',' April' |
+        replace: '-05',' May' |
+        replace: '-06',' June' |
+        replace: '-07',' July' |
+        replace: '-08',' August' |
+        replace: '-09',' September' |
+        replace: '-10',' October' |
+        replace: '-11',' November' |
+        replace: '-12',' December'}};;
+  }
+
+
   dimension_group: delivered {
     type: time
     timeframes: [
